@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!-- <ul>
+        <li>
+            <li>{{values[0]}}</li>
+            <li>{{values[1]}}</li>
+            <li>{{values[2]}}</li>
+        </li>
+    </ul> -->
+    <ul>
+        {% for value in values %}
+        <li>{{value}}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
