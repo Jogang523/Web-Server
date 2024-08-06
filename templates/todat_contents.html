@@ -4,13 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/div_style.css') }}">
 </head>
 <body>
+  <div class ='content'>
     <h3>네이트 최신 뉴스</h3>
     <ul>
-        {% for title, url in zip(nate_titles, nate_urls) %}
-          <li><a href="{{ url }}">{{ title }}</a></li>
+        {% for i in range(0,nate_len) %}
+          <li><a href="{{nate_url[i]}}">{{nate_title[i]}}</a></li>
         {% endfor %}
       </ul>
+  </div>
 </body>
 </html>

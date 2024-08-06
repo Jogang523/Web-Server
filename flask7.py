@@ -22,7 +22,7 @@ def contents():
     # print('1 :', mynate[1])
 
     # return render_template('today_contents.html', list1=mynate, list2=myhumor, list3=myclient)
-    return render_template('today_contents.html', nate_url=nate_url, nate_title=mynate_title, nate_len = len(mynate_title))
+    return render_template('todat_contents.html', nate_url=nate_url, nate_title=mynate_title, nate_len = len(mynate_title))
 
 
 
