@@ -3,12 +3,12 @@
 
 import streamlit as st
 
-st.title('이것은 타이틀 입니다..' )
-st.title('스마일 	:100:')
+# st.title('이것은 타이틀 입니다..' )
+# st.title('스마일 	:100:')
 
-st.header('헤더 입니다 :smile:')
-st.subheader('서브헤더 입니다 :smile:')
-st.caption('캡션 입니다 :smile:')
+# st.header('헤더 입니다 :smile:')
+# st.subheader('서브헤더 입니다 :smile:')
+# st.caption('캡션 입니다 :smile:')
 
 sample_code="""
 def function():

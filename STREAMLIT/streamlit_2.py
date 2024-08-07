@@ -30,7 +30,7 @@ if agree:
 
 mbti = st.radio(
     '당신의 MBTI 유형은?',
-    ('ISTJ', 'ISFJ', 'INFJ', 'INTJ', 'ISTP', 'ISFP', 'INFP', 'INTP', 'ESTP', 'ESFP', 'ENFP', 'ENTP', 'ESTJ', 'ESFJ', 'ENFJ', 'ENTJ')
+    ('ISTJ', 'ISFJ', 'INFJ', 'INTJ', 'ISTP', 'ISFP', 'INFP', 'INTP')
 )
 
 if mbti == 'ISTJ':
@@ -51,13 +51,6 @@ options = st.multiselect(
 )
 st.write('당신이 좋아하는 과일은:', options)
 
-#슬라이더
-
-value = st.slider(
-    '범위의 값을 가음과 같이 지정할 수 있어요',
-    0.0,100.0,(25.0,75.0)
-)
-st.write('범위 값은:', value)
 
 #텍스트 입력
 
@@ -77,6 +70,15 @@ number = st.number_input(
     step=1
 )
 st.write('당신이 입력한 숫자는: ', number)
+
+#슬라이더
+
+value = st.slider(
+    '범위의 값을 다음과 같이 지정할 수 있어요',
+    0.0,100.0,(25.0,75.0)
+)
+st.write('범위 값은:', value)
+
 
 # 시간 구간 슬라이더
 import datetime as dt
