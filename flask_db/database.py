@@ -110,16 +110,16 @@ def get_point(stu_idx):
     return result_list
 
 
-result = add_student('박철수', '18', '서울')
-print(result)
+# result = add_student('박철수', '18', '서울')
+# print(result)
 
-result = get_student_list(None)
-print(result)
+# result = get_student_list(None)
+# print(result)
 
-result = get_student_info(3)
-print(result)
+# result = get_student_info(3)
+# print(result)
 
-add_point(3, '10', '70')
-result = get_point(3)
-print(result)
+# add_point(3, '10', '70')
+# result = get_point(3)
+# print(result)
 
