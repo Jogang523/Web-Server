@@ -1,4 +1,3 @@
-// scope
 // 전역변수 : 프로그램 전체에서 사용 가능한 변수
 // 지역변수 : 특정 함수, 영역 내에서만 사용하는 변수
 // 전역변수 저장공간, 지역변수 저장공간이별도로 존재
@@ -10,31 +9,31 @@ let a = 1; // 전역변수
 
 function funcA(){
     let b = 2; // 지역변수
-    console.log(a);
-    console.log(b);
+    console.log('a =',a);
+    console.log('b =',b);
 }
 
 funcA();
 
 if (true){
     let c =1;
-    console.log(c);
+    console.log('c =',c);
 }
 
 //console.log(c); // 에러 발생
 
 for (let i=0; i < 10; i++){
     let d = 1;
-    console.log(d);
+    console.log('d =',d);
 }
 
 function funcB(){
     let b=2;
-    console.log(b);
+    console.log('b =',b);
 
     function funcC(){
-        console.log(c);
-        console.log(a);
+        //console.log(c);
+        console.log('a =',a);
     }
     funcC();
 }
