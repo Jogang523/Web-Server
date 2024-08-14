@@ -5,7 +5,7 @@
 
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
-from typing import Optional, List
+from typing import Optional, List, Dict, Union
 
 app = FastAPI()
 
@@ -37,6 +37,11 @@ class Item3(BaseModel):
     description : str
     image : Image
 
+class Item4(BaseModel):
+    name : str
+    tags : List[str]
+    variant : Union[int, str]
+
 @app.post("/items/")
 def create_item(item : Item0):
     return {"item" : item.dict()}
@@ -51,5 +56,9 @@ async def create_item(item : Item2):
 
 @app.post("/items3/")
 async def create_item(item : Item3):
+    return {"item" : item.dict()} 
+
+@app.post("/items4/")
+async def create_item(item : Item4):
     return {"item" : item.dict()} 
 
