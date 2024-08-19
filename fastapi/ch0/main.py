@@ -17,7 +17,7 @@ app = FastAPI() # Fastapi 객체생성
 def read_root():
     return {'message':'hello world!'}
 
-# nuvicorn main:app --reload
+# nvicorn main:app --reload
 # 문서를 자동 생성
 # http://127.0.0.1:8000/docs
 # http://127.0.0.1:8000/redocs
@@ -29,6 +29,7 @@ def read_item(item_id):
     return {'item_id' : item_id}
 
 # 쿼리 매개변수
+# http://127.0.0.1:8000/items?skip=5&limit=10
 @app.get('/items')
 def read_items(skip, limit):
     return {'skip':skip,'limit':limit}
