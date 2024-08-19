@@ -6,7 +6,12 @@
     <title>Document</title>
 </head>
 <body>
-    <h1> my brid page </h1>
-    <img src="img\WS썸네일.png" width="80%">
+ {% if time_of_day == "morning" %}
+    <h1>good morning</h1>
+ {% elif time_of_day == 'afternoon' %}
+    <h1>good afternoon</h1>
+ {% else %}
+    <h1>good evening</h1>
+ {% endif %}    
 </body>
 </html>

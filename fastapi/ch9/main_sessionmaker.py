@@ -5,12 +5,19 @@
 
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy import Column, Integer, String, create_engine
 from sqlalchemy.ext.declarative import declarative_base  # => table 생성
 from pydantic import BaseModel  # => pydantic model : 새로운 데이터타입 묶음
 
+
 database_url = "mysql+pymysql://root:1234@localhost/fastapi_db" # 데이터베이스 주소
 engine = create_engine(database_url)  # 데이터베이스 연결 객체
+
+# 두 번째 방식 : sessionmake를 통해서 session을 생성...
+# 장점 : session을 정교하게 관리할 수 있다. 명시적으로 세션을 생성하거나 종교...
+# 단점 : session을 자동으로 close하지 않는다  - 자원의 낭비
+sessionlocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base() # 테이블을 생성하기 위한 sqlalchemy 객체
 
@@ -28,15 +35,13 @@ class UserCreate(BaseModel):
     username: str
     email: str
 
-# session 객체를 만드는 첫 번쨰 방식 : 일반적이고 권장되는 방식
 # database session 생성하고 관리하는 database 세션 객체..
-# 장점 : session의 생명주기를 자동으로 관리 - 자원의 효율성을 높인다..
-def get_db():
-    db = Session(bind=engine)
-    try:
-        yield db   # generate함수 - database 객체를 return함
-    except:
-        db.close()  
+# def get_db():
+#     db = Session(bind=engine)
+#     try:
+#         yield db   # generate함수 - database 객체를 return함
+#     except:
+#         db.close()  
 
 # 테이블 생성 명렁 : 테이블이 없으면 새로 생성, 있으면 생성하지 않늠..
 Base.metadata.create_all(bind=engine)
@@ -48,7 +53,9 @@ def read_root():
     return {"message" : 'hello, world'}
 
 @app.post("/users")
-def create_user(user: UserCreate, db: Session = Depends(get_db)): # 의존성 주입함수 - routing함수 실행 전 실행됨
+def create_user(user: UserCreate): # 의존성 주입함수 - routing함수 실행 전 실행됨
+    # 다른 방식 : session 객체 생성
+    db = sessionlocal()
     # 테이블 내에 있는 개별 데이터...
     new_user = User(username=user.username, email = user.email)  # 테이블 클래스의 객체는 table의 개별 row data
     db.add(new_user)  # db session 객체 테이블에 데이터 추가

@@ -16,7 +16,7 @@ Base = declarative_base() # 테이블을 생성하기 위한 sqlalchemy 객체
 
 # database architecture : database schema
 
-# 테이블 생성 => 객체 => row data 하나
+# 테이블 클래스 생성 => 객체 => row data 하나
 class User(Base): 
     __tablename__ = "users"  # 테이블이름..
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
@@ -55,6 +55,26 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)): # 의존성 �
     db.commit()  # db 변경사항저장
     db.refresh(new_user)  # db정보로  session db객체 정보를 update
     return {"id": new_user.id, "username":new_user.username, 'email':new_user.email}
+
+@app.get("/users/{user_id}")  # 경로 매개변수
+def read_user(user_id: int, db: Session=Depends(get_db)):
+    # db.query(table name).filter(조건) => User class의 객체 : db table의 개별 데이터...
+    db_user = db.query(User).filter(User.id == user_id).first()  # select ~ from ~ where ~...
+    if db_user is None:
+        return {"error" : "user not found"}
+    return {"id": db_user.id, "username" :db_user.username, "email":db_user.email}
+
+# select ~ from ~ where ~ .
+
+# db.query(User.username).all() -  user table의 username값을 모두 출력
+# db.query(User).filter(User.username == 'park').first()
+# db.query(User).filter(User.username == 'John').filter(User.email == "john@hanmail.net").first()
+# db.query(User).order_by(User.username).all()
+# db.query(User).order_by(desc(User.username)).all()
+# db.query(User).limit(5).all()
+# db.query(User).offset(2).all()
+
+
 
 
 # http://127.0.0.1:8000/users

@@ -6,10 +6,11 @@
     <title>Document</title>
 </head>
 <body>
-    <header>
-        <h1> 환영합니다 </h1>
-    </header>
-    {% block content %}
-    {% endblock %}
+    <ul>
+        {% for item in items %}
+            <li>{{item}}</li>
+        {% endfor %}
+    </ul>
+    
 </body>
 </html>
