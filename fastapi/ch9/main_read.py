@@ -7,7 +7,9 @@ from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import Column, Integer, String, create_engine
 from sqlalchemy.ext.declarative import declarative_base  # => table 생성
+from sqlalchemy import func
 from pydantic import BaseModel  # => pydantic model : 새로운 데이터타입 묶음
+from typing import Optional
 
 database_url = "mysql+pymysql://root:1234@localhost/fastapi_db" # 데이터베이스 주소
 engine = create_engine(database_url)  # 데이터베이스 연결 객체
@@ -20,7 +22,7 @@ Base = declarative_base() # 테이블을 생성하기 위한 sqlalchemy 객체
 class User(Base): 
     __tablename__ = "users"  # 테이블이름..
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    username = Column(String(50), unique=True, index=True)
+    username = Column(String(50), unique=False, index=True)
     email = Column(String(120))
 
 # pydantic model : 새로운 데이터 타입의 덩어리 - json data구조 생성
@@ -57,15 +59,19 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)): # 의존성 �
     return {"id": new_user.id, "username":new_user.username, 'email':new_user.email}
 
 @app.get("/users/{user_id}")  # 경로 매개변수
-def read_user(user_id: int, db: Session=Depends(get_db)):
+def read_users(user_id: int, db: Session=Depends(get_db)):
     # db.query(table name).filter(조건) => User class의 객체 : db table의 개별 데이터...
     db_user = db.query(User).filter(User.id == user_id).first()  # select ~ from ~ where ~...
     if db_user is None:
         return {"error" : "user not found"}
     return {"id": db_user.id, "username" :db_user.username, "email":db_user.email}
 
-# select ~ from ~ where ~ .
+@app.get("/users_groupby/{user_id}")
+def read_users_groupby(userid: int, db: Session=Depends(get_db)):
+    df_user_count = db.query(User.username, func.count(User.id)).groupby(User.username).all()
+    users_count = [{'username':username, 'count':count} for username, count in df_user_count]
 
+# select ~ from ~ where ~ .
 # db.query(User.username).all() -  user table의 username값을 모두 출력
 # db.query(User).filter(User.username == 'park').first()
 # db.query(User).filter(User.username == 'John').filter(User.email == "john@hanmail.net").first()
@@ -74,6 +80,23 @@ def read_user(user_id: int, db: Session=Depends(get_db)):
 # db.query(User).limit(5).all()
 # db.query(User).offset(2).all()
 
+class UserUpdate(BaseModel):
+    username: Optional[str] = None
+    email: Optional[str] = None
+
+# updata
+@app.put("/users/{user_id}")
+def updata_user(user_id: int, user: UserUpdate, db:Session=Depends(get_db)):
+    db_user = db.query(User).filter(User.id == user_id).first() # 테이블에서 id에 해당하는 하나의 data를 가져옴
+    if db_user is None:
+        return {"error" : "user not found"}
+    if user.username is not None:
+        db_user.username = user.username
+    if user.email is not None:
+        db_user.email = user.email
+    db.commit()
+    db.refresh(db_user)
+    return {'id':db_user.id, 'username':db_user.username, 'email':db_user.email}
 
 
 
