@@ -9,14 +9,14 @@ from typing import Optional
 app = FastAPI()
 templates = Jinja2Templates(directory = "templates")
 
-database_url="mysql_pymysql://root:1234@localhost/mome_db"
+database_url="mysql+pymysql://root:1234@localhost/memo_db"
 engine = create_engine(database_url)
 
 Base = declarative_base()
 
 # table
 class Memo(Base):
-    __table__ = "memo"
+    __tablename__ = "memo"
     id = Column(Integer,primary_key=True, index=True)
     title = Column(String(100))
     content = Column(String(1000))
@@ -44,10 +44,10 @@ Base.metadata.create_all(bind=engine) # 테이블 생성
 @app.post("/memos")
 async def create_memo(memo: MemoCreate, db: Session = Depends(get_db)):
     new_memo = Memo(title = memo.title, content = memo.content)
-    db.add()
+    db.add(new_memo)
     db.commit()
     db.refresh(new_memo)
-    return {{"id":new_memo.id, "title":new_memo.title, "content":new_memo.content}}
+    return ({"id":new_memo.id, "title":new_memo.title, "content":new_memo.content})
 
 @app.get("/memos/")
 async def list_memos(db:Session = Depends(get_db)):
@@ -55,7 +55,7 @@ async def list_memos(db:Session = Depends(get_db)):
     return [{"id":memo.id,"title":memo.title,"content":memo.content} for memo in memos]
 
 @app.put("/memos/{memo_id}")
-async def updata_memo(memo_id: int, memo: MemoUpdate, db : Session = Depends(get_db)):
+async def update_memo(memo_id: int, memo: MemoUpdate, db : Session = Depends(get_db)):
     db_memo = db.query(Memo).filter(Memo.id == memo_id).first() 
     if db_memo is None:
         return ({"error":"memo is no found"})
