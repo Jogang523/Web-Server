@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CORS 테스트</title>
+
+    <script type="text/javascript">
+        async function makeRequest(){
+            try{
+                const response = await fetch('http://localhost:8000/hello',
+                {
+                    method: "GET",
+                    credentials : "include" 
+                }); // fetch : request
+            if(!response.ok){
+                throw new Error("network response was not ok")
+            }
+            const data = await response.json()
+            console.log(data);
+            document.getElementById('result').innerHTML = JSON.stringify(data);
+            }
+            catch(error){
+                console.error('error:',error)
+                document.getElementById('result').innerHTML = error;
+            }
+        }
+
+    </script>
+</head>
+<body>
+    <h1> cors 테스트 페이지 </h1>
+    <button onclick="makeRequest()">서버에 요청하기</button>
+    <div id="result"></div>
+</body>
+</html>
