@@ -18,7 +18,7 @@ def sync_call(times : int, url : str = default_url):
     return [ 'elasped_time_sync:', round(elasped_time_sync,3)]
 
 # 비동기식
-@app.get("/sync/{times}")
+@app.get("/async/{time}")
 async def async_call(times : int, url : str = default_url):
     start_time = time()
     async with aiohttp.ClientSession() as session:

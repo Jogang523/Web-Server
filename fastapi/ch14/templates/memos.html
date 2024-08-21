@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>My Memo</h1>
+    <p><a href="/memos/create">새 메모 추가</a></p>
+    {% for memo in memos %}
+    <div>
+        <h2>{{memo.title}}</h2>
+        <p>{{memo.content}}</p>
+        <a href="/memos/update/{memo.id}">수정</a>
+        <a href="/memos/delete/{memo.id}">삭제</a>
+    </div>
+    {% endfor %}
+</body>
+</html>

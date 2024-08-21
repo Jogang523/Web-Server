@@ -8,6 +8,7 @@
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import uvicorn
 
 app = FastAPI()
 
@@ -26,3 +27,6 @@ def read_root():
 @app.get('/hello')
 def hello():
     return {"message":"hello, hello"}
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
