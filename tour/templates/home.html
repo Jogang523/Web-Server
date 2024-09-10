@@ -100,7 +100,7 @@
             .then(result => {
                 if (result.status === 200) {
                     alert(result.body.message); // 성공 메시지 표시
-                    window.location.href = '/memos'; // 성공 시 리다이렉트
+                    window.location.href = '/board'; // 성공 시 리다이렉트
                 } else {
                     throw new Error(result.body.detail || '로그인을 실패했습니다.'); // 서버가 제공하는 에러 메시지 또는 기본 메시지
                 }

@@ -13,3 +13,11 @@ class UserCreate(BaseModel):
 class UserLogin(BaseModel):
     username: str
     password: str # 해시전 패스워드 받음
+
+class BoardCreate(BaseModel):
+    subject: str
+    content: str
+
+class BoardUpdate(BaseModel):
+    subject: Optional[str] = None
+    content: Optional[str] = None

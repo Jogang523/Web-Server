@@ -1,12 +1,13 @@
 from fastapi import APIRouter, Request, Depends, HTTPException
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
-from user import User
-from dependencies import get_db, get_password_hash, verify_password # 만들어놓은 함수 임포트
-from schemas import UserCreate, UserLogin # 만들어놓은 함수 임포트
+from dependencies import get_db, get_password_hash, verify_password 
+from schemas import UserCreate, UserLogin,BoardCreate,BoardUpdate # 만들어놓은 함수 임포트
+from models import User,Board,Coment # 만들어놓은 함수 임포트
 
-router = APIRouter()
 templates = Jinja2Templates(directory="templates")
+router = APIRouter()
+
 
 # 회원 가입
 @router.post("/signup")
@@ -43,9 +44,91 @@ async def login(request: Request, signin_data: UserLogin, db: Session = Depends(
 async def logout(request: Request):
     request.session.pop("username", None)
     return {"message": "로그아웃이 성공했습니다."}
-    
-# 메모 생성
 
-@router.get("/about")
-async def about():
-    return {"message": "이것은 마이 메모 앱의 소개 페이지입니다."}
+# 회원 탈퇴
+@router.delete("/delete_account")
+async def delete_account(request: Request, db: Session = Depends(get_db)):
+    username = request.session.get("username")
+    if username is None:
+        raise HTTPException(status_code=401, detail="Not authorized")
+    
+    user = db.query(User).filter(User.username == username).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    # 해당 사용자가 작성한 모든 게시글 삭제
+    db.query(Board).filter(Board.user_id == user.id).delete()
+
+    db.delete(user)
+    db.commit()
+
+    #탈퇴 후 로그아웃
+    request.session.pop("username", None)
+
+    return {"message": "회원 탈퇴가 성공적으로 완료되었습니다."}
+
+###################################################################################################################################################
+
+# 게시판 작성
+@router.post("/board")
+async def create_board(request: Request, board: BoardCreate, db: Session = Depends(get_db)):
+    username = request.session.get("username")
+    if username is None:
+        raise HTTPException(status_code=401, detail="Not authorized")
+    user = db.query(User).filter(User.username == username).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    new_board = Board(user_id=user.id, subject=board.subject, content=board.content)
+    db.add(new_board)
+    db.commit()
+    db.refresh(new_board)
+    return new_board
+
+#게시판 목록
+@router.get("/board")
+async def list_board(db: Session = Depends(get_db)):
+    boards = db.query(Board).all()
+    return [{"id": board.id, "title": board.subject, "content": board.content} for board in boards]
+
+#게시글 수정
+@router.put("/board/{board_id}")
+async def update_board(request: Request, board_id: int, board: BoardUpdate, db: Session = Depends(get_db)):
+    username = request.session.get("username")
+    if username is None:
+        raise HTTPException(status_code=401, detail="Not authorized")
+    user = db.query(User).filter(User.username == username).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")     
+    db_board = db.query(Board).filter(Board.user_id == user.id, Board.id == board_id).first()
+    if db_board is None:
+        return ({"error": "ㅋㅋ 니 글 없음"})
+
+    if board.subject is not None:
+        db_board.subject = board.subject
+    if board.content is not None:
+        db_board.content = board.content
+        
+    db.commit()
+    db.refresh(db_board)
+    return db_board
+
+#게시글 삭제
+@router.delete("/board/{board_id}")
+async def update_board(request: Request, board_id: int, board: BoardUpdate, db: Session = Depends(get_db)):
+    username = request.session.get("username")
+    if username is None:
+        raise HTTPException(status_code=401, detail="Not authorized")
+    user = db.query(User).filter(User.username == username).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")     
+    db_board = db.query(Board).filter(Board.user_id == user.id, Board.id == board_id).first()
+    if db_board is None:
+        return ({"error": "ㅋㅋ 니 글 없음"})
+
+        
+    db.delete(db_board)
+    db.commit()
+    return ({"message": "Memo deleted"})
+
+
